@@ -1,10 +1,12 @@
 Cloud-Based Big Data Analytics System for Real-Time Prescription Validation & Drug Interaction Warnings
+
 Team A4
-	Rupali K – [CB.AI.U4AID23033]
-	Mahadev S – [CB.AI.U4AID23034]
-	Tendool Srivatsav S – [CB.AI.U4AID23035]
-	Sarang U – [CB.AI.U4AID23036]
-	Roshini A – [CB.AI.U4AID23069]
+Rupali K – [CB.AI.U4AID23033]
+Mahadev S – [CB.AI.U4AID23034]
+Tendool Srivatsav S – [CB.AI.U4AID23035]
+Sarang U – [CB.AI.U4AID23036]
+Roshini A – [CB.AI.U4AID23069]
+
 Problem Statement
 Healthcare providers need a fast, reliable way to validate prescriptions in real time reading a doctor’s prescription (often handwritten), extracting drug names and dosages, checking drug drug interactions (DDIs), and validating dosage safety given standard guidelines. Traditional manual checks are slow and error-prone; relying only on static rules fails to generalize to unseen combinations.
 This project builds a hybrid AI system that:
