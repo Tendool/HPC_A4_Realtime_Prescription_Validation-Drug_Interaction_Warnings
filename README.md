@@ -39,7 +39,7 @@ o	Post-process with medical NER/regex to extract: DRUG, DOSE
 3.	Validation
 o	Measure field-level extraction F1 (exact match on DRUG, DOSE, FREQ).
 o	Export structured JSON for downstream checks.
-________________________________________
+
 Phase 3: DDI Prediction & Dosage Validation (Weeks 5–6)
 1.	DDI Model (Prediction)
 o	Input: pairs/tuples of standardized drug IDs (+ optional patient context).
