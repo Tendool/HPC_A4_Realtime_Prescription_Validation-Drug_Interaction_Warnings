@@ -1,0 +1,221 @@
+{
+  "agent": {
+    "metrics_collection_interval": 60,
+    "run_as_user": "cwagent"
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": [
+          {
+            "file_path": "/app/logs/app.log",
+            "log_group_name": "/zaura-health/app",
+            "log_stream_name": "{instance_id}/app.log",
+            "retention_in_days": 7,
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/nginx/access.log",
+            "log_group_name": "/zaura-health/nginx",
+            "log_stream_name": "{instance_id}/access.log",
+            "retention_in_days": 3,
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/nginx/error.log",
+            "log_group_name": "/zaura-health/nginx",
+            "log_stream_name": "{instance_id}/error.log",
+            "retention_in_days": 7,
+            "timezone": "UTC"
+          },
+          {
+            "file_path": "/var/log/docker/container.log",
+            "log_group_name": "/zaura-health/docker",
+            "log_stream_name": "{instance_id}/container.log",
+            "retention_in_days": 3,
+            "timezone": "UTC"
+          }
+        ]
+      }
+    }
+  },
+  "metrics": {
+    "namespace": "ZauraHealth/EC2",
+    "metrics_collected": {
+      "cpu": {
+        "measurement": [
+          {
+            "name": "cpu_usage_idle",
+            "rename": "CPU_USAGE_IDLE",
+            "unit": "Percent"
+          },
+          {
+            "name": "cpu_usage_iowait",
+            "rename": "CPU_USAGE_IOWAIT",
+            "unit": "Percent"
+          },
+          {
+            "name": "cpu_usage_user",
+            "rename": "CPU_USAGE_USER",
+            "unit": "Percent"
+          },
+          {
+            "name": "cpu_usage_system",
+            "rename": "CPU_USAGE_SYSTEM",
+            "unit": "Percent"
+          }
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "*"
+        ],
+        "totalcpu": true
+      },
+      "disk": {
+        "measurement": [
+          {
+            "name": "used_percent",
+            "rename": "DISK_USED_PERCENT",
+            "unit": "Percent"
+          },
+          {
+            "name": "inodes_free",
+            "rename": "DISK_INODES_FREE",
+            "unit": "Count"
+          }
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "*"
+        ]
+      },
+      "diskio": {
+        "measurement": [
+          {
+            "name": "io_time",
+            "rename": "DISKIO_IO_TIME",
+            "unit": "Milliseconds"
+          },
+          {
+            "name": "read_bytes",
+            "rename": "DISKIO_READ_BYTES",
+            "unit": "Bytes"
+          },
+          {
+            "name": "write_bytes",
+            "rename": "DISKIO_WRITE_BYTES",
+            "unit": "Bytes"
+          },
+          {
+            "name": "reads",
+            "rename": "DISKIO_READS",
+            "unit": "Count"
+          },
+          {
+            "name": "writes",
+            "rename": "DISKIO_WRITES",
+            "unit": "Count"
+          }
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "*"
+        ]
+      },
+      "mem": {
+        "measurement": [
+          {
+            "name": "mem_used_percent",
+            "rename": "MEM_USED_PERCENT",
+            "unit": "Percent"
+          },
+          {
+            "name": "mem_available_percent",
+            "rename": "MEM_AVAILABLE_PERCENT",
+            "unit": "Percent"
+          },
+          {
+            "name": "mem_used",
+            "rename": "MEM_USED",
+            "unit": "Bytes"
+          },
+          {
+            "name": "mem_cached",
+            "rename": "MEM_CACHED",
+            "unit": "Bytes"
+          }
+        ],
+        "metrics_collection_interval": 60
+      },
+      "net": {
+        "measurement": [
+          {
+            "name": "bytes_sent",
+            "rename": "NET_BYTES_SENT",
+            "unit": "Bytes"
+          },
+          {
+            "name": "bytes_recv",
+            "rename": "NET_BYTES_RECEIVED",
+            "unit": "Bytes"
+          },
+          {
+            "name": "drop_in",
+            "rename": "NET_DROP_IN",
+            "unit": "Count"
+          },
+          {
+            "name": "drop_out",
+            "rename": "NET_DROP_OUT",
+            "unit": "Count"
+          }
+        ],
+        "metrics_collection_interval": 60,
+        "resources": [
+          "*"
+        ]
+      },
+      "netstat": {
+        "measurement": [
+          {
+            "name": "tcp_established",
+            "rename": "NETSTAT_TCP_ESTABLISHED",
+            "unit": "Count"
+          },
+          {
+            "name": "tcp_time_wait",
+            "rename": "NETSTAT_TCP_TIME_WAIT",
+            "unit": "Count"
+          }
+        ],
+        "metrics_collection_interval": 60
+      },
+      "processes": {
+        "measurement": [
+          {
+            "name": "running",
+            "rename": "PROCESSES_RUNNING",
+            "unit": "Count"
+          },
+          {
+            "name": "sleeping",
+            "rename": "PROCESSES_SLEEPING",
+            "unit": "Count"
+          },
+          {
+            "name": "dead",
+            "rename": "PROCESSES_DEAD",
+            "unit": "Count"
+          }
+        ],
+        "metrics_collection_interval": 60
+      }
+    },
+    "append_dimensions": {
+      "AutoScalingGroupName": "${aws:AutoScalingGroupName}",
+      "ImageId": "${aws:ImageId}",
+      "InstanceId": "${aws:InstanceId}",
+      "InstanceType": "${aws:InstanceType}"
+    }
+  }
+}
