@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Contribution - Zaura Health</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-flask"></i>
+                        <span class="brand-name">Zaura Health</span>
+                        <span class="brand-tagline">by Z Corp.®</span>
+                    </div>
+                </div>
+                
+                <nav class="nav-menu">
+                    <a href="/" class="nav-item">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    {% if user.role == 'doctor' %}
+                    <a href="/prescription-upload" class="nav-item">
+                        <i class="fas fa-camera"></i>
+                        <span>Prescription Analysis</span>
+                    </a>
+                    {% endif %}
+                    {% if user.role == 'scientist' %}
+                    <a href="/contribute" class="nav-item active">
+                        <i class="fas fa-plus"></i>
+                        <span>Contribute Data</span>
+                    </a>
+                    {% endif %}
+                </nav>
+                
+                <div class="user-section">
+                    <div class="user-info">
+                        <i class="fas fa-user-cog"></i>
+                        <span class="user-name">{{ user.full_name }}</span>
+                        <span class="user-role role-scientist">Scientist</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <a href="/" class="btn btn-secondary">
+                            <i class="fas fa-chart-line"></i> Analysis
+                        </a>
+                        
+                        <button id="themeToggle" class="btn btn-icon" title="Toggle Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        
+                        <a href="/logout" class="btn btn-outline">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <i class="fas fa-database"></i>
+                        Drug Interaction Data Contribution
+                    </h1>
+                    <p class="hero-description">
+                        Help improve our AI model by contributing new drug combination data.
+                        Your expertise directly enhances the system's accuracy and safety.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number">20M+</span>
+                            <span class="stat-label">Training Samples</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">10,988</span>
+                            <span class="stat-label">Drug Vocabulary</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">87.5%</span>
+                            <span class="stat-label">Current Accuracy</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contribution Form -->
+            <section class="contribution-section">
+                <div class="contribution-card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-plus-circle"></i>
+                            Add New Drug Combination
+                        </h2>
+                        <p>Contribute verified drug interaction data to enhance model capabilities</p>
+                    </div>
+
+                    <form id="contributionForm" class="contribution-form">
+                        <!-- Drug Inputs -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-pills"></i> Drug Combination</h3>
+                            
+                            <div class="drugs-container">
+                                <div class="drugs-grid" id="contributionDrugsGrid">
+                                    <div class="drug-input-group">
+                                        <label for="contrib_drug1">Drug 1 *</label>
+                                        <input type="text" id="contrib_drug1" name="drugs[]" placeholder="Enter drug name..." required>
+                                    </div>
+                                    
+                                    <div class="drug-input-group">
+                                        <label for="contrib_drug2">Drug 2 *</label>
+                                        <input type="text" id="contrib_drug2" name="drugs[]" placeholder="Enter drug name..." required>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" id="addContribDrugBtn" class="btn btn-secondary">
+                                    <i class="fas fa-plus"></i> Add Drug
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Safety Assessment -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-shield-alt"></i> Safety Assessment</h3>
+                            
+                            <div class="safety-options">
+                                <label class="radio-option safe-option">
+                                    <input type="radio" name="safety_label" value="safe" required>
+                                    <div class="radio-content">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>SAFE</span>
+                                        <small>No significant interaction expected</small>
+                                    </div>
+                                </label>
+                                
+                                <label class="radio-option unsafe-option">
+                                    <input type="radio" name="safety_label" value="unsafe" required>
+                                    <div class="radio-content">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span>UNSAFE</span>
+                                        <small>Potential interaction or contraindication</small>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="form-section">
+                            <h3><i class="fas fa-info-circle"></i> Additional Information</h3>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="dosage_info">Dosage Information</label>
+                                    <input type="text" id="dosage_info" name="dosage_info" 
+                                           placeholder="e.g., 500mg aspirin + 1000mg metformin daily">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="confidence_level">Confidence Level</label>
+                                    <select id="confidence_level" name="confidence_level">
+                                        <option value="1">1 - Low confidence</option>
+                                        <option value="2">2 - Fair confidence</option>
+                                        <option value="3" selected>3 - Moderate confidence</option>
+                                        <option value="4">4 - High confidence</option>
+                                        <option value="5">5 - Very high confidence</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notes">Clinical Notes</label>
+                                <textarea id="notes" name="notes" rows="4" 
+                                          placeholder="Additional clinical observations, mechanisms, patient populations, etc."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="submit-section">
+                            <button type="submit" class="btn btn-primary btn-large">
+                                <i class="fas fa-upload"></i>
+                                Contribute Data
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Guidelines Section -->
+            <section class="guidelines-section">
+                <div class="guidelines-card">
+                    <h2><i class="fas fa-clipboard-list"></i> Contribution Guidelines</h2>
+                    
+                    <div class="guidelines-grid">
+                        <div class="guideline">
+                            <div class="guideline-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h3>Evidence-Based</h3>
+                            <p>Base contributions on peer-reviewed literature, clinical studies, or established medical knowledge.</p>
+                        </div>
+                        
+                        <div class="guideline">
+                            <div class="guideline-icon">
+                                <i class="fas fa-spell-check"></i>
+                            </div>
+                            <h3>Accurate Names</h3>
+                            <p>Use standard drug names (generic or brand). Ensure correct spelling and formatting.</p>
+                        </div>
+                        
+                        <div class="guideline">
+                            <div class="guideline-icon">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <h3>Balanced Data</h3>
+                            <p>Contribute both safe and unsafe combinations to maintain model balance.</p>
+                        </div>
+                        
+                        <div class="guideline">
+                            <div class="guideline-icon">
+                                <i class="fas fa-notes-medical"></i>
+                            </div>
+                            <h3>Clinical Context</h3>
+                            <p>Include dosage information and clinical notes when available for better model training.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Data Quality</h4>
+                    <p>All contributions are reviewed and validated before model integration.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Research Impact</h4>
+                    <p>Your contributions directly improve healthcare AI accuracy and patient safety.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Z Corp.® Research</h4>
+                    <p>© 2025 Z Corp. Advancing healthcare through collaborative AI development.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-header success-header">
+                <h3><i class="fas fa-check-circle"></i> Contribution Successful</h3>
+            </div>
+            <div class="modal-body">
+                <p>Thank you for contributing to Zaura Health! Your data has been submitted and will be reviewed for model integration.</p>
+                <div class="contribution-summary" id="contributionSummary">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="addAnotherBtn">
+                    <i class="fas fa-plus"></i> Add Another
+                </button>
+                <button class="btn btn-secondary" id="viewAnalysisBtn">
+                    <i class="fas fa-chart-line"></i> View Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Messages -->
+    <div class="alert-container" id="alertContainer"></div>
+
+    <script src="{{ url_for('static', filename='js/contribute.js') }}"></script>
+</body>
+</html>

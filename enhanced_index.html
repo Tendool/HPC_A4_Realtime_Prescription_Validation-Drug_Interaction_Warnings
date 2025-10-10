@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaura Health - Drug Interaction Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-flask"></i>
+                        <span class="brand-name">Zaura Health</span>
+                        <span class="brand-tagline">by Z Corp.®</span>
+                    </div>
+                </div>
+                
+                <nav class="nav-menu">
+                    <a href="/" class="nav-item active">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    {% if user.role == 'doctor' %}
+                    <a href="/prescription-upload" class="nav-item">
+                        <i class="fas fa-camera"></i>
+                        <span>Prescription Analysis</span>
+                    </a>
+                    {% endif %}
+                    {% if user.role == 'scientist' %}
+                    <a href="/contribute" class="nav-item">
+                        <i class="fas fa-plus"></i>
+                        <span>Contribute Data</span>
+                    </a>
+                    {% endif %}
+                </nav>
+                
+                <div class="user-section">
+                    <div class="user-info">
+                        <i class="fas fa-user-md"></i>
+                        <span class="user-name">{{ user.full_name }}</span>
+                        <span class="user-role role-{{ user.role }}">{{ user.role|title }}</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        {% if user.role == 'scientist' %}
+                        <a href="/contribute" class="btn btn-secondary">
+                            <i class="fas fa-plus"></i> Contribute Data
+                        </a>
+                        {% endif %}
+                        
+                        <button id="themeToggle" class="btn btn-icon" title="Toggle Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        
+                        <a href="/logout" class="btn btn-outline">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        <i class="fas fa-shield-alt"></i>
+                        AI-Powered Drug Interaction Analysis
+                    </h1>
+                    <p class="hero-description">
+                        Advanced neural network analysis with dosage-based safety assessment.
+                        Analyze up to 10 drug combinations with real-time safety predictions.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <span class="stat-number" id="accuracyRate">87.5%</span>
+                            <span class="stat-label">Model Accuracy</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number" id="drugVocabulary">10,988</span>
+                            <span class="stat-label">Drug Vocabulary</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">20M+</span>
+                            <span class="stat-label">Training Samples</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analysis Form -->
+            <section class="analysis-section">
+                <div class="analysis-card">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-prescription-bottle-alt"></i>
+                            Drug Interaction Analysis
+                        </h2>
+                        <p>Enter drug names and dosages for comprehensive safety analysis</p>
+                    </div>
+
+                    <form id="analysisForm" class="analysis-form">
+                        <div class="drugs-container">
+                            <div class="drugs-grid" id="drugsGrid">
+                                <!-- Drug input fields will be dynamically generated -->
+                                <div class="drug-input-group">
+                                    <label for="drug1">Drug 1 *</label>
+                                    <div class="input-with-suggestions">
+                                        <input type="text" id="drug1" name="drugs[]" placeholder="Enter drug name..." required>
+                                        <div class="suggestions-dropdown" id="suggestions1"></div>
+                                    </div>
+                                    <input type="number" name="dosages[]" placeholder="Dosage (mg/24h)" min="0" step="0.1" class="dosage-input">
+                                </div>
+                                
+                                <div class="drug-input-group">
+                                    <label for="drug2">Drug 2 *</label>
+                                    <div class="input-with-suggestions">
+                                        <input type="text" id="drug2" name="drugs[]" placeholder="Enter drug name..." required>
+                                        <div class="suggestions-dropdown" id="suggestions2"></div>
+                                    </div>
+                                    <input type="number" name="dosages[]" placeholder="Dosage (mg/24h)" min="0" step="0.1" class="dosage-input">
+                                </div>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" id="addDrugBtn" class="btn btn-secondary">
+                                    <i class="fas fa-plus"></i> Add Drug
+                                </button>
+                                <button type="button" id="removeDrugBtn" class="btn btn-outline" style="display: none;">
+                                    <i class="fas fa-minus"></i> Remove Drug
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="submit-section">
+                            <button type="submit" id="analyzeBtn" class="btn btn-primary btn-large">
+                                <i class="fas fa-search"></i>
+                                Analyze Interactions
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-card">
+                    <div class="results-header">
+                        <h2>
+                            <i class="fas fa-chart-line"></i>
+                            Analysis Results
+                        </h2>
+                        <div class="overall-safety" id="overallSafety">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="results-content">
+                        <!-- Safety Score -->
+                        <div class="safety-score-container">
+                            <div class="safety-score-circle" id="safetyScoreCircle">
+                                <div class="score-text" id="scoreText">0%</div>
+                            </div>
+                            <div class="score-details">
+                                <h3>Safety Score</h3>
+                                <p id="scoreDescription">Calculating...</p>
+                            </div>
+                        </div>
+
+                        <!-- Dosage Analysis -->
+                        <div class="dosage-analysis" id="dosageAnalysis">
+                            <h3><i class="fas fa-pills"></i> Dosage Safety Analysis</h3>
+                            <div class="dosage-grid" id="dosageGrid">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Interaction Details -->
+                        <div class="interaction-details">
+                            <h3><i class="fas fa-exchange-alt"></i> Drug Combination Analysis</h3>
+                            <div class="combinations-grid" id="combinationsGrid">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Recommendations -->
+                        <div class="recommendations" id="recommendations">
+                            <h3><i class="fas fa-lightbulb"></i> Clinical Recommendations</h3>
+                            <div class="recommendations-list" id="recommendationsList">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Zaura Health</h4>
+                    <p>Advanced AI-powered drug interaction analysis for healthcare professionals.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Powered by Z Corp.®</h4>
+                    <p>© 2025 Z Corp. All rights reserved. Professional healthcare AI solutions.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Important Notice</h4>
+                    <p class="disclaimer">
+                        This tool is for screening purposes only. Always consult healthcare professionals for clinical decisions.
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-flask fa-spin"></i>
+            <p>Analyzing drug interactions...</p>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-question-circle"></i> How to Use</h3>
+                <button class="modal-close" id="helpModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h4>Drug Entry</h4>
+                    <ul>
+                        <li>Enter exact drug names (e.g., "aspirin", "metformin")</li>
+                        <li>Use autocomplete suggestions for accuracy</li>
+                        <li>Add up to 10 drugs for comprehensive analysis</li>
+                    </ul>
+                </div>
+                <div class="help-section">
+                    <h4>Dosage Information</h4>
+                    <ul>
+                        <li>Enter dosage in mg per 24 hours</li>
+                        <li>Dosage affects safety assessment</li>
+                        <li>Higher dosages may override safe predictions</li>
+                    </ul>
+                </div>
+                <div class="help-section">
+                    <h4>Results Interpretation</h4>
+                    <ul>
+                        <li><span class="safety-badge safe">SAFE</span> High confidence, likely safe combination</li>
+                        <li><span class="safety-badge unsafe">UNSAFE</span> Potential interaction or unknown drugs</li>
+                        <li>Confidence levels indicate prediction reliability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Help Button -->
+    <button class="help-btn" id="helpBtn" title="Help">
+        <i class="fas fa-question"></i>
+    </button>
+
+    <script src="{{ url_for('static', filename='js/enhanced_app.js') }}"></script>
+</body>
+</html>

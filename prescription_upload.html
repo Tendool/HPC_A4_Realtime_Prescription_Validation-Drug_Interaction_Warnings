@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescription Analysis - Zaura Health</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/enhanced_style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-flask"></i>
+                        <span class="brand-name">Zaura Health</span>
+                        <span class="brand-tagline">by Z Corp.®</span>
+                    </div>
+                </div>
+                
+                <nav class="nav-menu">
+                    <a href="/" class="nav-item">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/prescription-upload" class="nav-item active">
+                        <i class="fas fa-camera"></i>
+                        <span>Prescription Analysis</span>
+                    </a>
+                    {% if user.role == 'scientist' %}
+                    <a href="/contribute" class="nav-item">
+                        <i class="fas fa-plus"></i>
+                        <span>Contribute Data</span>
+                    </a>
+                    {% endif %}
+                </nav>
+                
+                <div class="user-section">
+                    <div class="user-info">
+                        <i class="fas fa-user-md"></i>
+                        <span class="user-name">{{ user.full_name }}</span>
+                        <span class="user-role role-{{ user.role }}">{{ user.role|title }}</span>
+                    </div>
+                    
+                    <div class="header-actions">
+                        <a href="/logout" class="btn btn-outline">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="page-header">
+                <div class="page-title-section">
+                    <h1 class="page-title">
+                        <i class="fas fa-camera"></i>
+                        Prescription Image Analysis
+                    </h1>
+                    <p class="page-subtitle">Upload prescription images for automatic drug interaction analysis</p>
+                </div>
+                
+                <div class="status-badge">
+                    <span class="status-indicator beta"></span>
+                    <span class="status-text">Beta Feature</span>
+                </div>
+            </div>
+
+            <div class="prescription-upload-container">
+                <!-- Upload Section -->
+                <div class="upload-section">
+                    <div class="upload-card">
+                        <h2 class="section-title">
+                            <i class="fas fa-upload"></i>
+                            Upload Prescription Image
+                        </h2>
+                        
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-placeholder" id="uploadPlaceholder">
+                                <div class="upload-icon">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                </div>
+                                <h3>Drag & drop prescription image here</h3>
+                                <p>or click to browse files</p>
+                                <div class="upload-specs">
+                                    <span>Supported formats: JPG, PNG, PDF</span>
+                                    <span>Max size: 10MB</span>
+                                </div>
+                                <button type="button" class="browse-btn" id="browseBtn">
+                                    <i class="fas fa-folder-open"></i>
+                                    Browse Files
+                                </button>
+                            </div>
+                            
+                            <input type="file" id="fileInput" accept="image/*,.pdf" style="display: none;">
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <div class="preview-header">
+                                <h3>Uploaded Image</h3>
+                                <button type="button" class="remove-btn" id="removeImage">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="preview-content">
+                                <img id="previewImg" src="" alt="Prescription preview">
+                                <div class="image-info">
+                                    <span class="file-name" id="fileName"></span>
+                                    <span class="file-size" id="fileSize"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Processing Options -->
+                        <div class="processing-options" id="processingOptions" style="display: none;">
+                            <h3>Analysis Options</h3>
+                            <div class="options-grid">
+                                <label class="option-item">
+                                    <input type="checkbox" id="extractDrugs" checked>
+                                    <span class="checkmark"></span>
+                                    <span class="option-text">Extract drug names</span>
+                                </label>
+                                <label class="option-item">
+                                    <input type="checkbox" id="extractDosages" checked>
+                                    <span class="checkmark"></span>
+                                    <span class="option-text">Extract dosages</span>
+                                </label>
+                                <label class="option-item">
+                                    <input type="checkbox" id="checkInteractions" checked>
+                                    <span class="checkmark"></span>
+                                    <span class="option-text">Check interactions</span>
+                                </label>
+                                <label class="option-item">
+                                    <input type="checkbox" id="generateReport">
+                                    <span class="checkmark"></span>
+                                    <span class="option-text">Generate detailed report</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons" id="actionButtons" style="display: none;">
+                            <button type="button" class="analyze-btn" id="analyzeBtn">
+                                <i class="fas fa-brain"></i>
+                                <span>Analyze Prescription</span>
+                                <div class="loading-spinner" style="display: none;"></div>
+                            </button>
+                            <button type="button" class="reset-btn" id="resetBtn">
+                                <i class="fas fa-refresh"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection" style="display: none;">
+                    <div class="results-card">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-line"></i>
+                            Analysis Results
+                        </h2>
+
+                        <!-- OCR Results -->
+                        <div class="ocr-results" id="ocrResults">
+                            <h3>Extracted Information</h3>
+                            <div class="extraction-status">
+                                <div class="status-item">
+                                    <i class="fas fa-pills"></i>
+                                    <span>Drugs Found: <span id="drugsCount">-</span></span>
+                                </div>
+                                <div class="status-item">
+                                    <i class="fas fa-weight"></i>
+                                    <span>Dosages Found: <span id="dosagesCount">-</span></span>
+                                </div>
+                            </div>
+                            
+                            <div class="extracted-drugs" id="extractedDrugs">
+                                <!-- Extracted drugs will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Interaction Analysis -->
+                        <div class="interaction-analysis" id="interactionAnalysis">
+                            <h3>Drug Interaction Analysis</h3>
+                            <div class="risk-summary" id="riskSummary">
+                                <!-- Risk summary will be populated here -->
+                            </div>
+                            
+                            <div class="detailed-interactions" id="detailedInteractions">
+                                <!-- Detailed interactions will be populated here -->
+                            </div>
+                        </div>
+
+                        <!-- Recommendations -->
+                        <div class="recommendations" id="recommendations">
+                            <h3>Clinical Recommendations</h3>
+                            <div class="recommendation-list" id="recommendationList">
+                                <!-- Recommendations will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OCR Status Message -->
+                <div class="ocr-status-message">
+                    <div class="status-card info">
+                        <div class="status-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="status-content">
+                            <h3>OCR Processing Under Development</h3>
+                            <p>The handwriting recognition system is currently being developed. Once ready, this feature will automatically extract drug names and dosages from uploaded prescription images.</p>
+                            <div class="coming-soon-badge">
+                                <span>Coming Soon</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <p>&copy; 2025 Z Corp. All rights reserved.</p>
+                </div>
+                <div class="footer-section">
+                    <span class="footer-badge">Powered by Z Corp.</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/prescription_upload.js') }}"></script>
+</body>
+</html>

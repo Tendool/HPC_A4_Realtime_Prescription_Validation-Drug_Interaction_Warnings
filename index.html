@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaura Health - Drug Interaction Analysis</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span class="brand-name">Zaura Health</span>
+                    </div>
+                    <p class="tagline">Powered by Z Corp.<sup>®</sup> AI Technology</p>
+                </div>
+                <div class="header-actions">
+                    <span class="professional-badge">
+                        <i class="fas fa-shield-alt"></i> Professional
+                    </span>
+                    <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <button class="btn-secondary" id="aboutBtn">
+                        <i class="fas fa-info-circle"></i> About
+                    </button>
+                    <button class="btn-secondary" id="helpBtn">
+                        <i class="fas fa-question-circle"></i> Help
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1 class="hero-title">
+                        AI-Powered Drug Interaction Analysis
+                    </h1>
+                    <p class="hero-description">
+                        Advanced deep learning technology to analyze drug combinations and ensure patient safety.
+                        Get instant, comprehensive safety assessments for multiple drug interactions.
+                    </p>
+                    <div class="hero-stats">
+                        <div class="stat-item glassmorphism">
+                            <div class="stat-number">87.5%</div>
+                            <div class="stat-label">Accuracy</div>
+                        </div>
+                        <div class="stat-item glassmorphism">
+                            <div class="stat-number">910K+</div>
+                            <div class="stat-label">Parameters</div>
+                        </div>
+                        <div class="stat-item glassmorphism">
+                            <div class="stat-number">20M+</div>
+                            <div class="stat-label">Records Analyzed</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analysis Form -->
+            <section class="analysis-section">
+                <div class="analysis-card glassmorphism gradient-border">
+                    <div class="card-header">
+                        <h2>
+                            <i class="fas fa-pills"></i>
+                            Drug Safety Analysis
+                            <span class="professional-badge">
+                                <i class="fas fa-brain"></i> AI Powered
+                            </span>
+                        </h2>
+                        <p>Enter the drugs you want to analyze for potential interactions</p>
+                    </div>
+
+                    <form id="analysisForm" class="analysis-form">
+                        <!-- Drug Input Section -->
+                        <div class="input-section">
+                            <label for="drugInput" class="input-label">
+                                <i class="fas fa-capsules"></i>
+                                Drug Names
+                                <span class="required">*</span>
+                            </label>
+                            <div class="drug-inputs" id="drugInputs">
+                                <!-- Dynamic drug inputs will be added here -->
+                            </div>
+                            <button type="button" class="add-drug-btn" id="addDrugBtn">
+                                <i class="fas fa-plus"></i> Add Another Drug
+                            </button>
+                        </div>
+
+                        <!-- Dosage Input Section -->
+                        <div class="input-section">
+                            <label for="dosageInput" class="input-label">
+                                <i class="fas fa-clock"></i>
+                                Dosage per 24 Hours
+                                <span class="optional">(Optional)</span>
+                            </label>
+                            <div class="dosage-input-group">
+                                <input type="number" 
+                                       id="dosageInput" 
+                                       name="dosage" 
+                                       min="0" 
+                                       step="0.1" 
+                                       placeholder="e.g., 2.0"
+                                       class="form-input">
+                                <span class="input-unit">doses</span>
+                            </div>
+                            <small class="input-help">
+                                <i class="fas fa-info-circle"></i>
+                                Enter the total number of doses taken in 24 hours if known
+                            </small>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="analyze-btn" id="analyzeBtn">
+                            <i class="fas fa-search"></i>
+                            <span class="btn-text">Analyze Drug Interactions</span>
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-card">
+                    <div class="results-header">
+                        <h2 id="resultsTitle">Analysis Results</h2>
+                        <div class="results-meta" id="resultsMeta"></div>
+                    </div>
+                    
+                    <!-- Overall Safety -->
+                    <div class="overall-safety" id="overallSafety"></div>
+                    
+                    <!-- Safety Score -->
+                    <div class="safety-score-section" id="safetyScoreSection"></div>
+                    
+                    <!-- Detailed Results -->
+                    <div class="detailed-results" id="detailedResults"></div>
+                    
+                    <!-- Recommendations -->
+                    <div class="recommendations" id="recommendations"></div>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <div class="error-alert" id="errorAlert" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <strong>Error</strong>
+                        <p id="errorMessage"></p>
+                    </div>
+                    <button class="close-error" onclick="hideError()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-heartbeat"></i>
+                        <span>Zaura Health</span>
+                    </div>
+                    <p class="footer-description">
+                        Advanced AI-powered healthcare solutions for safer medical practices.
+                    </p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li>Deep Learning Model</li>
+                        <li>910K+ Parameters</li>
+                        <li>87.5% Accuracy</li>
+                        <li>CUDA Accelerated</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Safety Notice</h4>
+                    <p class="safety-notice">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        This tool provides AI-based analysis for informational purposes only. 
+                        Always consult healthcare professionals for medical decisions.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 Z Corp.® All rights reserved. Zaura Health is powered by Z Corp.<sup>®</sup> AI Technology.</p>
+                <div class="footer-links">
+                    <a href="#privacy">Privacy Policy</a>
+                    <a href="#terms">Terms of Service</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>About Zaura Health</h3>
+                <button class="modal-close" onclick="closeModal('aboutModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Zaura Health is an advanced AI-powered drug interaction analysis platform 
+                    developed by Z Corp.® using cutting-edge deep learning technology. Our system analyzes over 
+                    20 million drug interaction records to provide comprehensive safety assessments.
+                </p>
+                <h4>Key Features:</h4>
+                <ul>
+                    <li>Advanced neural network with drug embeddings</li>
+                    <li>Support for up to 10 drugs per analysis</li>
+                    <li>Parallel processing of all drug combinations</li>
+                    <li>Real-time confidence scoring</li>
+                    <li>CUDA-accelerated predictions</li>
+                </ul>
+                <h4>Model Performance:</h4>
+                <ul>
+                    <li>Test Accuracy: 87.52%</li>
+                    <li>Model Parameters: 910,274</li>
+                    <li>Training Dataset: 20M+ records</li>
+                    <li>Drug Vocabulary: 1000+ unique drugs</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>How to Use</h3>
+                <button class="modal-close" onclick="closeModal('helpModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Step 1: Enter Drug Names</h4>
+                <p>Add at least 2 drugs you want to analyze. Use the "Add Another Drug" button to include additional medications.</p>
+                
+                <h4>Step 2: Optional Dosage Information</h4>
+                <p>If available, enter the total number of doses taken in 24 hours. This helps improve prediction accuracy.</p>
+                
+                <h4>Step 3: Analyze</h4>
+                <p>Click "Analyze Drug Interactions" to get comprehensive safety assessment including:</p>
+                <ul>
+                    <li>Overall safety classification</li>
+                    <li>Safety score (0-1)</li>
+                    <li>Individual combination results</li>
+                    <li>Confidence scores for each prediction</li>
+                </ul>
+                
+                <h4>Understanding Results:</h4>
+                <ul>
+                    <li><strong>SAFE:</strong> No dangerous interactions detected</li>
+                    <li><strong>UNSAFE:</strong> Potential dangerous interactions found</li>
+                    <li><strong>Confidence:</strong> Model's certainty (0-1, higher is more confident)</li>
+                </ul>
+                
+                <div class="warning-box">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Important:</strong> This tool provides AI-based analysis for informational purposes only. 
+                    Always consult qualified healthcare professionals before making medical decisions.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
